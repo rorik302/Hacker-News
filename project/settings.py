@@ -10,6 +10,7 @@ DEBUG = os.environ.get('DEBUG') in ['True', 'true', '1']
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split()
 
 INSTALLED_APPS = [
+    # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -17,6 +18,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Packages
+    'rest_framework',
+
+    # Project apps
     'posts'
 ]
 
