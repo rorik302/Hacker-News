@@ -8,5 +8,8 @@ class Post(models.Model):
     url = models.URLField()
     created = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        db_table = 'posts'
+
     def __str__(self):
         return self.title
