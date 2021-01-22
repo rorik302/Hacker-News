@@ -20,6 +20,7 @@ INSTALLED_APPS = [
 
     # Packages
     'rest_framework',
+    'background_task',
 
     # Project apps
     'posts'
