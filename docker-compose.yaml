@@ -1,14 +1,45 @@
 version: "3.8"
 
 services:
+  app:
+    build: .
+    ports:
+      - 8000:8000
+    volumes:
+      - ./db:/app/db
+    restart: unless-stopped
+    container_name: app
+    environment:
+      WAIT_HOSTS: db:3306
+      WAIT_HOSTS_TIMEOUT: 300
+      WAIT_SLEEP_INTERVAL: 3
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  tasks:
+    image: hackernews_app
+    command: bash -c "/wait && python manage.py add_new_posts --repeat 600 && python manage.py process_tasks"
+    restart: unless-stopped
+    container_name: tasks
+    environment:
+      WAIT_HOSTS: db:3306
+      WAIT_HOSTS_TIMEOUT: 300
+      WAIT_SLEEP_INTERVAL: 3
+    depends_on:
+      - app
+
   db:
     image: mysql:8.0.23
-    restart: always
+    restart: unless-stopped
+    container_name: database
     environment:
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    command: mysqld --default-authentication-plugin=mysql_native_password --skip-mysqlx
     ports:
       - 3306:3306
     volumes:
