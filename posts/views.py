@@ -14,6 +14,8 @@ class PostView(ListAPIView):
         return get_all_posts()
 
     def filter_queryset(self, queryset):
+        """ Фильтрация queryset на основании параметров запроса """
+
         queryset = self.get_queryset()
         query_params = self.request.query_params
 
