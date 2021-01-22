@@ -7,16 +7,14 @@ from posts.utils import is_query_params_valid
 
 class PostView(ListAPIView):
     serializer_class = PostSerializer
+    queryset = get_all_posts()
     ordering_fields = ['title', 'id', 'created', 'url']
     permitted_params = ['order', 'offset', 'limit']
-
-    def get_queryset(self):
-        return get_all_posts()
+    default_limit = 5
 
     def filter_queryset(self, queryset):
         """ Фильтрация queryset на основании параметров запроса """
 
-        queryset = self.get_queryset()
         query_params = self.request.query_params
 
         if query_params and is_query_params_valid(query_params, self.permitted_params):
@@ -31,7 +29,9 @@ class PostView(ListAPIView):
             limit = query_params.get('limit', '')
             if limit:
                 queryset = filter_queryset_by_param('limit', queryset, limit)
-        else:
-            queryset = queryset[:5]
+
+        # Если не задан ни один из параметров offset или limit, возвращаются только 5 записей
+        if not any(item in ['offset', 'limit'] for item in query_params):
+            queryset = queryset[:self.default_limit]
 
         return queryset
