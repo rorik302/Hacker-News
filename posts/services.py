@@ -2,10 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from requests.utils import default_headers
-from rest_framework.exceptions import ValidationError
 
 from posts.models import Post
-from posts.utils import is_query_param_valid
 
 
 class Parser:
@@ -67,22 +65,3 @@ def get_all_posts():
     """ Получение всех постов из БД """
 
     return Post.objects.all()
-
-
-def order_queryset_by_param(queryset, ordering, ordering_fields):
-    """ Сортировка queryset по заданному полю """
-
-    if ordering.replace('-', '') in ordering_fields:
-        return queryset.order_by(ordering)
-    else:
-        raise ValidationError(f'Сортировка по полю {ordering} невозможна')
-
-
-def filter_queryset_by_param(param, queryset, value):
-    """ Фильтрация queryset по заданному параметру """
-    
-    if is_query_param_valid(param, value, len(queryset)):
-        if param == 'offset':
-            return queryset[int(value):]
-        if param == 'limit':
-            return queryset[:int(value)]
